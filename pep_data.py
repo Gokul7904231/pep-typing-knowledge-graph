@@ -1,14 +1,11 @@
 """
 pep_data.py
 
-Manually extracted structured notes for 8 Python typing-related PEPs.
-Every field here was produced by reading the PEP text directly (Abstract,
-Rationale, Rejected Ideas / Alternatives sections) and making a judgment
-call about what counts as a "concept" and what counts as an "objection".
-
-No NER library, no auto-extraction tool, no LLM entity-extraction call
-was used to produce this data. This file IS the knowledge, in raw form,
-before it gets compiled into the graph structure by build_knowledge.py.
+This is me manually going through 8 typing-related PEPs and pulling out the structured bits 
+— reading the actual Abstract, Rationale, and Rejected Ideas sections myself, then deciding what counts 
+as a "concept" and what counts as an "objection." No NER tool, no auto-extraction, no LLM doing entity extraction 
+for me — just me reading and tagging.
+This file is the raw knowledge before build_knowledge.py turns it into the actual graph structure
 """
 
 PEPS = [
