@@ -1,15 +1,12 @@
 """
 reason.py
 
-Takes a NEW input (a proposal/idea that was not in the original PEP
-dataset) and reasons over knowledge_state.json to produce a structured,
-actionable output: which past PEPs are similar, what got rejected on
-similar ideas before, and which concepts the new idea touches.
+Simply feed it a brand-new proposal (not in the original PEP dataset) and it checks 
+that idea against everything logged in knowledge_state.json. Comes back with: which past 
+PEPs it resembles, whether something similar got rejected before (and why), and which concepts it touches.
 
-Matching is done with a hand-written keyword rule table (CONCEPT_KEYWORDS
-below) — not an NER library, not an LLM entity-extraction call. This is
-the same kind of manual judgment call used when the graph itself was
-built: a human decided which words signal which concept.
+Matching is just a hand-written keyword table (CONCEPT_KEYWORDS) — no NER, no LLM extraction. 
+Same manual judgment call used to build the graph itself, just automated at query time.
 
 Run:
     python reason.py "your new proposal text here"
