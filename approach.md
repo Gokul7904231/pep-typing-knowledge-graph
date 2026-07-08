@@ -1,5 +1,10 @@
 # Approach
 
+Raw reading notes taken while extracting each PEP are included in
+`reading_notes.md` — they show the extraction process (concepts spotted,
+objections flagged, cross-PEP observations) before it was formalized into
+the structured `pep_data.py` used to build the graph.
+
 ## Domain and scope
 
 Domain A: Python's design history, via PEPs (Python Enhancement Proposals).
@@ -113,8 +118,6 @@ a day.
 
 No LLM is called anywhere in this pipeline. All matching and ranking is
 deterministic and inspectable.
-
-Note : "Raw reading notes taken while extracting each PEP are included in reading_notes.md for reference — they show the extraction process before it was formalized into pep_data.py"
 
 ## What I'd build next
 
