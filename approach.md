@@ -114,6 +114,8 @@ a day.
 No LLM is called anywhere in this pipeline. All matching and ranking is
 deterministic and inspectable.
 
+Note : "Raw reading notes taken while extracting each PEP are included in reading_notes.md for reference — they show the extraction process before it was formalized into pep_data.py"
+
 ## What I'd build next
 
 - **Weighted/fuzzy concept matching.** The keyword table is exact-substring
