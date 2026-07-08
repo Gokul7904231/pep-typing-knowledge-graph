@@ -1,13 +1,9 @@
 """
 build_knowledge.py
 
-Compiles the manually-extracted notes in pep_data.py into a single
-graph-structured knowledge_state.json file.
-
-This script does NOT do any entity/relationship extraction — all the
-extraction work already happened by hand in pep_data.py. This script only
-reshapes that data into an explicit entities + edges graph format so it's
-easy to traverse in reason.py and easy to inspect independently.
+This one's just plumbing — it takes the manually extracted notes from pep_data.py and reshapes them into a proper graph: entities + edges, all in one knowledge_state.json file.
+No extraction happens here. All the actual reading-and-judgment work already happened by hand in pep_data.py. This script's only job is to take that raw data and lay it out as an 
+explicit graph so reason.py can traverse it easily, and so anyone can pop open the JSON and inspect it on their own.
 
 Run:
     python build_knowledge.py
@@ -39,9 +35,6 @@ def build():
             "status": pep["status"],
             "summary": pep["summary"],
         })
-
-        # Concept nodes (dedup by name; a concept can be introduced once
-        # but referenced/matched against by many future inputs)
         for concept_name in pep["concepts_introduced"]:
             if concept_name not in seen_concepts:
                 concept_id = f"CONCEPT-{len(seen_concepts) + 1:03d}"
@@ -59,7 +52,7 @@ def build():
                 "to": concept_id,
             })
 
-        # depends_on edges (PEP -> depends_on -> PEP)
+   
         for dep_number in pep.get("depends_on", []):
             dep_id = f"PEP-{dep_number}"
             edges.append({
@@ -68,7 +61,6 @@ def build():
                 "to": dep_id,
             })
 
-        # extends edges (PEP -> extends -> PEP)
         for ext_number in pep.get("extends", []):
             ext_id = f"PEP-{ext_number}"
             edges.append({
@@ -86,12 +78,11 @@ def build():
                 "to": rel_id,
             })
 
-        # Objection nodes + raises_objection_against edges
         for obj in pep.get("objections", []):
             entities["objections"].append({
                 "id": obj["id"],
                 "text": obj["text"],
-                "status": obj["status"],  # rejected / deferred / tension / debated / limitation
+                "status": obj["status"],  
             })
             edges.append({
                 "from": obj["id"],
