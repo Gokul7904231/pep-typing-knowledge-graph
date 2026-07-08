@@ -47,14 +47,15 @@ ranking is deterministic hand-written logic.
 ## Project structure
 
 ```
-pep_project/
-├── pep_data.py          # Manually extracted PEP notes (the raw knowledge)
-├── build_knowledge.py   # Compiles pep_data.py into a graph → knowledge_state.json
-├── reason.py             # Reasoning engine — run this with a new input
-├── knowledge_state.json  # Serialized, inspectable knowledge graph (generated)
-├── reading_notes.md      # Raw notes taken while reading each PEP
-├── approach.md           # Design reasoning, tradeoffs, what's next (read first)
-└── README.md             # This file
+pep_project/        
+├── PEP Doc                     # Python PEP documents used in this project
+|         /reading_notes.md     # Raw notes taken while reading each PEP    
+├── pep_data.py                 # Manually extracted PEP notes (the raw knowledge)
+├── build_knowledge.py          # Compiles pep_data.py into a graph → knowledge_state.json
+├── reason.py                   # Reasoning engine — run this with a new input
+├── knowledge_state.json        # Serialized, inspectable knowledge graph (generated)     
+├── approach.md                 # Design reasoning, tradeoffs, what's next (read first)
+└── README.md                   # This file
 ```
 
 ## Setup
