@@ -1,0 +1,681 @@
+{
+  "entities": {
+    "peps": [
+      {
+        "id": "PEP-3107",
+        "number": 3107,
+        "title": "Function Annotations",
+        "status": "Final",
+        "summary": "Plumbing PEP. Legalizes annotation syntax but assigns it zero built-in meaning \u2014 pure opt-in metadata slot. 484 is where the real payoff shows up."
+      },
+      {
+        "id": "PEP-482",
+        "number": 482,
+        "title": "Literature Overview for Type Hints",
+        "status": "Final",
+        "summary": "Not a real proposal \u2014 an informational survey doc used to justify design choices later made in 484. No syntax, no mechanics to extend."
+      },
+      {
+        "id": "PEP-483",
+        "number": 483,
+        "title": "The Theory of Type Hints",
+        "status": "Final",
+        "summary": "The theoretical backbone behind 484's design choices \u2014 gradual typing, variance \u2014 no syntax of its own."
+      },
+      {
+        "id": "PEP-484",
+        "number": 484,
+        "title": "Type Hints",
+        "status": "Final",
+        "summary": "The payoff PEP \u2014 gives PEP 3107's empty annotation syntax actual meaning via the typing module. Everything before this was setup; everything after is cleanup."
+      },
+      {
+        "id": "PEP-526",
+        "number": 526,
+        "title": "Syntax for Variable Annotations",
+        "status": "Final",
+        "summary": "Brings the same colon syntax to variables, not just function params, and kills the `# type:` comment workaround. Lots of rejected syntax here \u2014 a reminder how much bikeshedding goes into 'just add a colon.'"
+      },
+      {
+        "id": "PEP-544",
+        "number": 544,
+        "title": "Protocols: Structural subtyping (static duck typing)",
+        "status": "Final",
+        "summary": "Formalizes 'if it quacks like a duck' for static type checkers \u2014 no explicit inheritance needed. A recurring theme in its rejections is variance being a genuine pain point across these PEPs."
+      },
+      {
+        "id": "PEP-585",
+        "number": 585,
+        "title": "Type Hinting Generics In Standard Collections",
+        "status": "Final",
+        "summary": "Quality-of-life PEP: lets you write list[str] instead of typing.List[str], retiring the duplicate typing hierarchy. Its rejections are mostly about avoiding scope creep into smarter isinstance() behavior."
+      },
+      {
+        "id": "PEP-604",
+        "number": 604,
+        "title": "Allow writing union types as X | Y",
+        "status": "Final",
+        "summary": "Syntactic sugar for Union via operator overload. Conceptually the shortest PEP of the batch, but touches core interpreter behavior, so the drama is mostly about backport and compatibility risk rather than design."
+      }
+    ],
+    "concepts": [
+      {
+        "id": "CONCEPT-001",
+        "name": "annotation_syntax"
+      },
+      {
+        "id": "CONCEPT-002",
+        "name": "annotations_no_semantics"
+      },
+      {
+        "id": "CONCEPT-003",
+        "name": "opt_in_metadata"
+      },
+      {
+        "id": "CONCEPT-004",
+        "name": "typing_survey"
+      },
+      {
+        "id": "CONCEPT-005",
+        "name": "prior_art_research"
+      },
+      {
+        "id": "CONCEPT-006",
+        "name": "gradual_typing"
+      },
+      {
+        "id": "CONCEPT-007",
+        "name": "variance"
+      },
+      {
+        "id": "CONCEPT-008",
+        "name": "core_typing_primitives"
+      },
+      {
+        "id": "CONCEPT-009",
+        "name": "typing_module"
+      },
+      {
+        "id": "CONCEPT-010",
+        "name": "static_analysis_support"
+      },
+      {
+        "id": "CONCEPT-011",
+        "name": "dynamic_typing_preserved"
+      },
+      {
+        "id": "CONCEPT-012",
+        "name": "variable_annotation_syntax"
+      },
+      {
+        "id": "CONCEPT-013",
+        "name": "classvar_marker"
+      },
+      {
+        "id": "CONCEPT-014",
+        "name": "structural_subtyping"
+      },
+      {
+        "id": "CONCEPT-015",
+        "name": "protocol"
+      },
+      {
+        "id": "CONCEPT-016",
+        "name": "runtime_checkable_opt_in"
+      },
+      {
+        "id": "CONCEPT-017",
+        "name": "builtin_generic_subscription"
+      },
+      {
+        "id": "CONCEPT-018",
+        "name": "collection_typing_unification"
+      },
+      {
+        "id": "CONCEPT-019",
+        "name": "union_operator_syntax"
+      }
+    ],
+    "objections": [
+      {
+        "id": "obj_3107_1",
+        "text": "Special syntax for generators was rejected as too ugly.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_3107_2",
+        "text": "Stdlib objects for generic/higher-order functions were rejected due to too many thorny issues; left to third parties.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_3107_3",
+        "text": "A standard type-parameterization syntax was punted despite considerable discussion, to let libraries figure it out first.",
+        "status": "deferred"
+      },
+      {
+        "id": "obj_3107_4",
+        "text": "Standardizing interoperability across annotation tools was rejected as premature; conventions left to evolve organically.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_3107_5",
+        "text": "Lambda annotations were rejected: parens around lambda params would be a backward-incompatible break, and lambdas are limited enough that a def rewrite is preferable.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_483_1",
+        "text": "Intersection types were cut from the core spec, with a note they might be added later.",
+        "status": "deferred"
+      },
+      {
+        "id": "obj_483_2",
+        "text": "Python is naturally structural (duck typing), but the design leaned nominal for stricter checker control \u2014 acknowledged as a design tension, not a hard rejection.",
+        "status": "tension"
+      },
+      {
+        "id": "obj_484_1",
+        "text": "Evaluating hints offline-only was rejected \u2014 the interpreter can't distinguish a type hint from a random annotation without a defined meaning.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_484_2",
+        "text": "A double-colon (::) syntax was rejected as ugly, not English-like, and would restrict support to Python 3.5+ only.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_484_3",
+        "text": "New keywords such as where or requires were rejected since they would not work on earlier Python 3 versions.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_484_4",
+        "text": "Using decorators or docstrings for typing was rejected as too verbose compared to plain annotations.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_484_5",
+        "text": "Forward references to self-referencing classes remain a real friction point, requiring hacky string-literal annotations since names must exist before use.",
+        "status": "limitation"
+      },
+      {
+        "id": "obj_526_1",
+        "text": "New keywords like var or local were rejected \u2014 var is too common as an identifier, local doesn't fit globals or class vars.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_526_2",
+        "text": "Reusing def as a keyword was rejected since def already unambiguously means 'define function' to everyone.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_526_3",
+        "text": "Tuple unpacking annotations (x, y: T) were rejected as ambiguous \u2014 unclear if both are T or T is distributed across them.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_526_4",
+        "text": "Chained assignment annotations (x: int = y = 1) were rejected as hard to parse and ambiguous.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_526_5",
+        "text": "Annotations inside with/for loop headers were rejected as likely to confuse the CPython parser.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_526_6",
+        "text": "Auto-initializing unassigned annotated variables to None was rejected as messy and not worth a new singleton.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_526_7",
+        "text": "Evaluating bare local annotations at runtime was rejected as costly, since it would populate a dict on every function call.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_544_1",
+        "text": "Making every class a protocol by default was rejected \u2014 most classes have messy, implementation-heavy interfaces that are a bad fit.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_544_2",
+        "text": "Allowing protocols to subclass normal classes was rejected because it breaks the transitivity of subtyping.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_544_3",
+        "text": "Optional protocol members (as in TypeScript) were rejected to keep the design simple.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_544_4",
+        "text": "Covariant subtyping of mutable attributes was rejected because it hides hard-to-spot bugs at runtime.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_544_5",
+        "text": "Allowing manual overrides of inferred variance was rejected since it breaks transitivity and produces confusing error messages.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_544_6",
+        "text": "Default isinstance() support was rejected as unreliable for structural checks, requiring an explicit @runtime_checkable opt-in instead.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_585_1",
+        "text": "Doing nothing was rejected \u2014 forcing parallel imports from typing was seen as confusing and cumbersome.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_585_2",
+        "text": "Full generics erasure at runtime was rejected since list[str] silently returning a bare list would break backward compatibility and introspection.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_585_3",
+        "text": "Having isinstance(x, list[str]) silently ignore the generic parameter was rejected as misleading \u2014 it would look like a deep check but wouldn't be one.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_585_4",
+        "text": "Having isinstance() perform real element-by-element runtime checks was rejected as potentially destructive on some collections and out of scope.",
+        "status": "rejected"
+      },
+      {
+        "id": "obj_604_1",
+        "text": "The new operator overload was argued against (not fully rejected) since it creates a dependency between the typing module and core builtins, complicating backports to older Python versions.",
+        "status": "debated"
+      },
+      {
+        "id": "obj_604_2",
+        "text": "Extending isinstance()/issubclass() to accept the new syntax was argued against as requiring migrating parts of typing into builtins.",
+        "status": "debated"
+      },
+      {
+        "id": "obj_604_3",
+        "text": "Classes that already implement a custom __or__ metaclass method will have that override the new union behavior \u2014 an acknowledged breaking-change risk.",
+        "status": "limitation"
+      }
+    ]
+  },
+  "edges": [
+    {
+      "from": "PEP-3107",
+      "type": "introduces",
+      "to": "CONCEPT-001"
+    },
+    {
+      "from": "PEP-3107",
+      "type": "introduces",
+      "to": "CONCEPT-002"
+    },
+    {
+      "from": "PEP-3107",
+      "type": "introduces",
+      "to": "CONCEPT-003"
+    },
+    {
+      "from": "PEP-3107",
+      "type": "depends_on",
+      "to": "PEP-318"
+    },
+    {
+      "from": "PEP-3107",
+      "type": "depends_on",
+      "to": "PEP-362"
+    },
+    {
+      "from": "obj_3107_1",
+      "type": "raises_objection_against",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "obj_3107_2",
+      "type": "raises_objection_against",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "obj_3107_3",
+      "type": "raises_objection_against",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "obj_3107_4",
+      "type": "raises_objection_against",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "obj_3107_5",
+      "type": "raises_objection_against",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "PEP-482",
+      "type": "introduces",
+      "to": "CONCEPT-004"
+    },
+    {
+      "from": "PEP-482",
+      "type": "introduces",
+      "to": "CONCEPT-005"
+    },
+    {
+      "from": "PEP-482",
+      "type": "relates_to",
+      "to": "PEP-484"
+    },
+    {
+      "from": "PEP-483",
+      "type": "introduces",
+      "to": "CONCEPT-006"
+    },
+    {
+      "from": "PEP-483",
+      "type": "introduces",
+      "to": "CONCEPT-007"
+    },
+    {
+      "from": "PEP-483",
+      "type": "introduces",
+      "to": "CONCEPT-008"
+    },
+    {
+      "from": "PEP-483",
+      "type": "depends_on",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "PEP-483",
+      "type": "relates_to",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_483_1",
+      "type": "raises_objection_against",
+      "to": "PEP-483"
+    },
+    {
+      "from": "obj_483_2",
+      "type": "raises_objection_against",
+      "to": "PEP-483"
+    },
+    {
+      "from": "PEP-484",
+      "type": "introduces",
+      "to": "CONCEPT-009"
+    },
+    {
+      "from": "PEP-484",
+      "type": "introduces",
+      "to": "CONCEPT-010"
+    },
+    {
+      "from": "PEP-484",
+      "type": "introduces",
+      "to": "CONCEPT-011"
+    },
+    {
+      "from": "PEP-484",
+      "type": "depends_on",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "PEP-484",
+      "type": "depends_on",
+      "to": "PEP-483"
+    },
+    {
+      "from": "PEP-484",
+      "type": "depends_on",
+      "to": "PEP-482"
+    },
+    {
+      "from": "PEP-484",
+      "type": "extends",
+      "to": "PEP-3107"
+    },
+    {
+      "from": "obj_484_1",
+      "type": "raises_objection_against",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_484_2",
+      "type": "raises_objection_against",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_484_3",
+      "type": "raises_objection_against",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_484_4",
+      "type": "raises_objection_against",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_484_5",
+      "type": "raises_objection_against",
+      "to": "PEP-484"
+    },
+    {
+      "from": "PEP-526",
+      "type": "introduces",
+      "to": "CONCEPT-012"
+    },
+    {
+      "from": "PEP-526",
+      "type": "introduces",
+      "to": "CONCEPT-013"
+    },
+    {
+      "from": "PEP-526",
+      "type": "depends_on",
+      "to": "PEP-484"
+    },
+    {
+      "from": "PEP-526",
+      "type": "extends",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_526_1",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "obj_526_2",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "obj_526_3",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "obj_526_4",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "obj_526_5",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "obj_526_6",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "obj_526_7",
+      "type": "raises_objection_against",
+      "to": "PEP-526"
+    },
+    {
+      "from": "PEP-544",
+      "type": "introduces",
+      "to": "CONCEPT-014"
+    },
+    {
+      "from": "PEP-544",
+      "type": "introduces",
+      "to": "CONCEPT-015"
+    },
+    {
+      "from": "PEP-544",
+      "type": "introduces",
+      "to": "CONCEPT-016"
+    },
+    {
+      "from": "PEP-544",
+      "type": "depends_on",
+      "to": "PEP-484"
+    },
+    {
+      "from": "PEP-544",
+      "type": "depends_on",
+      "to": "PEP-483"
+    },
+    {
+      "from": "PEP-544",
+      "type": "depends_on",
+      "to": "PEP-526"
+    },
+    {
+      "from": "PEP-544",
+      "type": "extends",
+      "to": "PEP-483"
+    },
+    {
+      "from": "obj_544_1",
+      "type": "raises_objection_against",
+      "to": "PEP-544"
+    },
+    {
+      "from": "obj_544_2",
+      "type": "raises_objection_against",
+      "to": "PEP-544"
+    },
+    {
+      "from": "obj_544_3",
+      "type": "raises_objection_against",
+      "to": "PEP-544"
+    },
+    {
+      "from": "obj_544_4",
+      "type": "raises_objection_against",
+      "to": "PEP-544"
+    },
+    {
+      "from": "obj_544_5",
+      "type": "raises_objection_against",
+      "to": "PEP-544"
+    },
+    {
+      "from": "obj_544_6",
+      "type": "raises_objection_against",
+      "to": "PEP-544"
+    },
+    {
+      "from": "PEP-585",
+      "type": "introduces",
+      "to": "CONCEPT-017"
+    },
+    {
+      "from": "PEP-585",
+      "type": "introduces",
+      "to": "CONCEPT-018"
+    },
+    {
+      "from": "PEP-585",
+      "type": "depends_on",
+      "to": "PEP-484"
+    },
+    {
+      "from": "PEP-585",
+      "type": "depends_on",
+      "to": "PEP-526"
+    },
+    {
+      "from": "PEP-585",
+      "type": "depends_on",
+      "to": "PEP-544"
+    },
+    {
+      "from": "PEP-585",
+      "type": "extends",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_585_1",
+      "type": "raises_objection_against",
+      "to": "PEP-585"
+    },
+    {
+      "from": "obj_585_2",
+      "type": "raises_objection_against",
+      "to": "PEP-585"
+    },
+    {
+      "from": "obj_585_3",
+      "type": "raises_objection_against",
+      "to": "PEP-585"
+    },
+    {
+      "from": "obj_585_4",
+      "type": "raises_objection_against",
+      "to": "PEP-585"
+    },
+    {
+      "from": "PEP-604",
+      "type": "introduces",
+      "to": "CONCEPT-019"
+    },
+    {
+      "from": "PEP-604",
+      "type": "depends_on",
+      "to": "PEP-484"
+    },
+    {
+      "from": "PEP-604",
+      "type": "depends_on",
+      "to": "PEP-526"
+    },
+    {
+      "from": "PEP-604",
+      "type": "depends_on",
+      "to": "PEP-483"
+    },
+    {
+      "from": "PEP-604",
+      "type": "extends",
+      "to": "PEP-484"
+    },
+    {
+      "from": "obj_604_1",
+      "type": "raises_objection_against",
+      "to": "PEP-604"
+    },
+    {
+      "from": "obj_604_2",
+      "type": "raises_objection_against",
+      "to": "PEP-604"
+    },
+    {
+      "from": "obj_604_3",
+      "type": "raises_objection_against",
+      "to": "PEP-604"
+    }
+  ],
+  "meta": {
+    "domain": "Python PEPs \u2014 typing evolution",
+    "pep_count": 8,
+    "concept_count": 19,
+    "objection_count": 32,
+    "edge_count": 74
+  }
+}
